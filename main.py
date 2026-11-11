@@ -68,10 +68,22 @@ class ReadCSVTool(Tool):
 
 
 # ==================== 创建 Agent ====================
+# 从 .env / 环境变量读取，不在代码里写死 Key
+API_KEY = os.getenv("MODELSCOPE_API_KEY") or os.getenv("OPENAI_API_KEY")
+BASE_URL = os.getenv("LLM_BASE_URL", "https://api-inference.modelscope.cn/v1")
+MODEL_NAME = os.getenv("LLM_MODEL", "deepseek-ai/DeepSeek-V4.1-Flash")
+
+if not API_KEY:
+    raise SystemExit(
+        "未找到 API Key。请复制 .env.example 为 .env，并填入：\n"
+        "  MODELSCOPE_API_KEY=your_key_here\n"
+        "（或在系统环境变量里设置同名变量）"
+    )
+
 llm = HelloAgentsLLM(
-    model="deepseek-ai/DeepSeek-V4.1-Flash",
-    api_key="apikey",
-    base_url="https://api-inference.modelscope.cn/v1"
+    model=MODEL_NAME,
+    api_key=API_KEY,
+    base_url=BASE_URL
 )
 
 agent = SimpleAgent(
